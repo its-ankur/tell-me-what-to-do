@@ -1,6 +1,6 @@
 [
     {
-        "i": 6
+        "i": 9
     },
     {
         "Mern Stack Course": "https://www.youtube.com/watch?v=2am19DDsu58&t=12s"
@@ -31,5 +31,11 @@
     },
     {
         "Codechef practice": "https://www.codechef.com/dashboard"
+    },
+    {
+        "Flexbox css": "https://www.youtube.com/watch?v=oJXmXzfjrBY"
+    },
+    {
+        "Leetcode": "https://leetcode.com/"
     }
 ]
