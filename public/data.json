@@ -1,6 +1,6 @@
 [
     {
-        "i": 12
+        "i": 1
     },
     {
         "Mern Stack Course": "https://www.youtube.com/watch?v=2am19DDsu58&t=12s"
@@ -39,9 +39,9 @@
         "Code Quotient extra class": "Dsa practice"
     },
     {
-        "Code Quotient module":"Java"
+        "Code Quotient module": "Java"
     },
     {
-        "Code Quotient module":"Backend"
+        "Code Quotient module": "Backend"
     }
 ]
