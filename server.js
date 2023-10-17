@@ -1,5 +1,6 @@
 const fs = require('fs');
 const express = require('express');
+const schedule = require('node-schedule');
 const client = require("mongodb").MongoClient;
 const app = express();
 app.set("view engine", "ejs");
@@ -16,63 +17,31 @@ app.get('/', (req, res) => {
     dbinstance.collection("Work").find({}).toArray().then((data) => {
         k = data;
         let b;
-        if (k[1].i < k.length - 1) {
-            b = k[1].i;
-            k[1].i++;
-            res.render('index', { data: k[b] });
+        let c = k[0].i;
+        if (c <= k.length - 1) {
+            b = c;
+            c++;
+            res.render('index', { "work": k[b] });
+            console.log(k[b]);
+            // schedule.scheduleJob('Work-a', '*/2 * * * * *', () => {
+            //     b = c;
+            //     c++;
+            //     res.render('index', { "work": k[b] });
+            //     //schedule.cancelJob('Work-a');
+            //     dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
+            //});
         }
-        else if (k[1].i >= k.length - 1) {
-            b = 2;
-            res.render('index', { data: k[b] });
+        else if (c > k.length - 1) {
+            b = c;
+            c = 1;
+            res.render('index', { "work": k[c] });
+            console.log(k[c]);
         }
-        // dbinstance.collection("Work").updateOne({ $set: { "i": b } });
+        dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
     }).catch((err) => {
         console.log(err);
     });
-    // let b;
-    // //console.log(k+"data[0].i");
-    // if(k[1]<k.length-1){
-    //     //k=data[0];
-    //     b=k[1];
-    //     k[1]++;
-    //     console.log(k[1]+"data[0].i");
-    // }
-    // else if(q[0].i>=q.length-1){
-    //     q[0].i=1;
-    // }
-    // //console.log(data.length);
-    // let a=q[0].i;
-    // //console.log(k+"data[k].value");
-    // fs.writeFileSync("public/data.json",JSON.stringify(q));
-    // //console.log(k);
-    // console.log(a);
-    // res.send(q[a]);
-    // console.log(q[a]);
-    // res.render('index');
 });
-// app.post('/do',(req,res)=>{
-//     let data=fs.readFileSync(__dirname+'/public/data.json');
-//     let q=JSON.parse(data);
-//     let k; 
-//     //console.log(data[0].i+"data[0].i");
-//     if(q[0].i<q.length-1){
-//         //k=data[0];
-//         k=q[0].i;
-//         q[0].i++;
-//         //console.log(data[0].i+"data[0].i");
-//     }
-//     else if(q[0].i>=q.length-1){
-//         q[0].i=1;
-//     }
-//     //console.log(data.length);
-//     let a=q[0].i;
-//     //console.log(k+"data[k].value");
-//     fs.writeFileSync("public/data.json",JSON.stringify(q));
-//     //console.log(k);
-//     console.log(a);
-//     res.send(q[a]);
-//     console.log(q[a]);
-// });
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 });
