@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
             b = c;
             c++;
             res.render('index', { "work": k[b] });
-            console.log(k[b]);
+            //console.log(k[b]);
             // schedule.scheduleJob('Work-a', '*/2 * * * * *', () => {
             //     b = c;
             //     c++;
@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
             b = c;
             c = 1;
             res.render('index', { "work": k[c] });
-            console.log(k[c]);
+            //console.log(k[c]);
         }
         dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
     }).catch((err) => {
