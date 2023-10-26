@@ -5,6 +5,7 @@ const client = require("mongodb").MongoClient;
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
 let dbinstance;
 client.connect("mongodb+srv://ankur1037:Ankurqwerty2003@cluster0.apokfz1.mongodb.net/?retryWrites=true&w=majority").then((server) => {
     dbinstance = server.db("Globe");
@@ -38,6 +39,21 @@ app.get('/', (req, res) => {
             //console.log(k[c]);
         }
         dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
+    }).catch((err) => {
+        console.log(err);
+    });
+});
+app.get('/add', (req, res) => {
+    res.render('add');
+});
+app.post('/submit', (req, res) => {
+    let Title = req.body.Title;
+    let Description = req.body.Description;
+    let Link = req.body.Link;
+    let data = { "Title": Title, "Description": Description, "Link": Link };
+    dbinstance.collection("Work").insertOne(data).then(() => {
+        console.log("data inserted");
+        res.redirect('/');
     }).catch((err) => {
         console.log(err);
     });
