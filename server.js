@@ -46,6 +46,37 @@ app.get('/', (req, res) => {
 app.get('/add', (req, res) => {
     res.render('add');
 });
+app.get('/edit', (req, res) => {
+    let k;
+    dbinstance.collection("Work").find({}).toArray().then((data) => {
+        k = data;
+        let c = k[0].i;
+        if(c==1){
+            res.render('edit', { "work": k[c] });
+        }
+        if (c <= k.length) {
+            let b=c-1;
+            res.render('edit', { "work": k[b] });
+        }
+        // else if (c > k.length - 1) {;
+        //     c=1;
+        //     res.render('edit', { "work": k[c] });
+        // }
+    }).catch((err) => {
+        console.log(err);
+    });
+});
+app.post('/editLink', (req, res) => {
+    let Title = req.body.Title;
+    let Link = req.body.Link;
+    let data = { "Title": Title, "Link": Link };
+    dbinstance.collection("Work").updateOne({ "Title": Title }, { $set: { "Link": Link } }).then(() => {
+        console.log("data inserted");
+        res.redirect('/');
+    }).catch((err) => {
+        console.log(err);
+    });
+});
 app.post('/submit', (req, res) => {
     let Title = req.body.Title;
     let Description = req.body.Description;
