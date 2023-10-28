@@ -71,7 +71,7 @@ app.post('/editLink', (req, res) => {
     let Link = req.body.Link;
     let data = { "Title": Title, "Link": Link };
     dbinstance.collection("Work").updateOne({ "Title": Title }, { $set: { "Link": Link } }).then(() => {
-        console.log("data inserted");
+        console.log("data edited");
         res.redirect('/');
     }).catch((err) => {
         console.log(err);
