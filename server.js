@@ -120,6 +120,30 @@ app.post('/submit', (req, res) => {
         console.log(err);
     });
 });
+app.get('/delete', (req, res) => {
+    let k;
+    dbinstance.collection("Work").find({}).toArray().then((data) => {
+        k = data;
+        let c = k[0].i;
+        if(c==1){
+            res.render('delete', { "work": k[c] });
+        }
+        if (c <= k.length) {
+            let b=c-1;
+            res.render('delete', { "work": k[b] });
+        }
+    }).catch((err) => {
+        console.log(err);
+    });
+});
+app.post('/deleteLink', (req, res) => {
+    dbinstance.collection("Work").deleteOne({'Title':req.body.Title}).then(() => {
+        console.log("data deleted");
+        res.redirect('/');
+    }).catch((err) => {
+        console.log(err);
+    });
+});
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 });
