@@ -42,7 +42,6 @@
         document.getElementById("work").innerHTML=data.Title;
         document.getElementById("desc").innerHTML=data.Description;
         var existingLink=document.getElementById("link");
-        console.log(document.getElementById("child"));
         existingLink.removeChild(document.getElementById("child"));
         var newLink=document.createElement("a");
         newLink.href=data.Link;
@@ -50,7 +49,6 @@
         newLink.id="child";
         newLink.textContent=data.Link;
         existingLink.appendChild(newLink);
-        console.log(data);
       })
       .catch((e)=>{
         console.log(e);
