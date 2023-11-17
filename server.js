@@ -1,4 +1,5 @@
 const fs = require('fs');
+const cron=require('node-cron');
 const express = require('express');
 const schedule = require('node-schedule');
 const client = require("mongodb").MongoClient;
@@ -13,6 +14,7 @@ client.connect("mongodb+srv://ankur1037:Ankurqwerty2003@cluster0.apokfz1.mongodb
 }).catch((err) => {
     console.log(err);
 });
+
 app.get('/', (req, res) => {
     // let k;
     // dbinstance.collection("Work").find({}).toArray().then((data) => {
@@ -44,30 +46,68 @@ app.get('/', (req, res) => {
     // });
     res.render('index');
 });
+app.get("/todo1",(req,res)=>{
+    let k;
+    dbinstance.collection("Work").find({}).toArray().then((data) => {
+        k = data;
+        let b;
+
+        let c = k[0].i;
+        if (c <= k.length - 1) {
+            b = c;
+            c++;
+            // res.render('todo', { "work": k[b] });
+            res.json(k[b]);
+            // setInterval(()=>{
+            //     res.redirect('/todo');
+            // });
+            // console.log(k[b]);
+            // cron.schedule('*/15 * * * * *', () => {
+            //     b = c;
+            //     c++;
+            //     res.render('index', { "work": k[b] });
+            //     schedule.cancelJob('Work-a');
+            //     dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
+            // });
+        }
+        else if (c > k.length - 1) {
+            b = c;
+            c = 1;
+            // res.render('todo', { "work": k[c] });
+            res.json(k[c]);
+        }
+        dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
+    }).catch((err) => {
+        console.log(err);
+})
+})
 app.get('/todo',(req,res)=>{
     let k;
     dbinstance.collection("Work").find({}).toArray().then((data) => {
         k = data;
         let b;
+
         let c = k[0].i;
         if (c <= k.length - 1) {
             b = c;
             c++;
             res.render('todo', { "work": k[b] });
-            //console.log(k[b]);
-            // schedule.scheduleJob('Work-a', '*/2 * * * * *', () => {
+            // setInterval(()=>{
+            //     res.redirect('/todo');
+            // });
+            // console.log(k[b]);
+            // cron.schedule('*/15 * * * * *', () => {
             //     b = c;
             //     c++;
             //     res.render('index', { "work": k[b] });
-            //     //schedule.cancelJob('Work-a');
+            //     schedule.cancelJob('Work-a');
             //     dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
-            //});
+            // });
         }
         else if (c > k.length - 1) {
             b = c;
             c = 1;
             res.render('todo', { "work": k[c] });
-            //console.log(k[c]);
         }
         dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
     }).catch((err) => {
@@ -89,10 +129,6 @@ app.get('/edit', (req, res) => {
             let b=c-1;
             res.render('edit', { "work": k[b] });
         }
-        // else if (c > k.length - 1) {;
-        //     c=1;
-        //     res.render('edit', { "work": k[c] });
-        // }
     }).catch((err) => {
         console.log(err);
     });
