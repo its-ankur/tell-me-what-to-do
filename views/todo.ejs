@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link href="./timer.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -21,38 +22,94 @@
         </tr>
         <tr>
             <td id="link">
-                <a id="child" href="<%=work.Link %>" target="_blank"><%=work.Link %></a>
+                <a id="child" href="<%=work.Link %>" target="_blank">
+                    <%=work.Link %>
+                </a>
             </td>
         </tr>
         </tr>
     </table>
     <a href="/edit">Edit data</a>
-</br>
+    </br>
     <a href="/add">Add data</a>
-</br>
+    </br>
     <a href="/delete">Delete data</a>
+    </br>
+    <div id="clock">
+        <h2>Click the image to start the timer (60 seconds)</h2>
+        <!-- <img src="img\Clock.png" onclick="countdown();"> -->
+        <div id="timeBox">
+            <h3>Time Left</h3>
+            <input id="min" type="text">
+            <font size="10">:</font>
+            <input id="sec" type="text">
+            <p id="msg"></p>
+        </div>
+    </div>
 </body>
 <script>
-    setInterval(()=>{
+    setInterval(() => {
         console.log("resquest send");
-      fetch("/todo1").then((response)=>{
-        console.log(response);
-        return response.json();
-      }).then((data)=>{
-        document.getElementById("work").innerHTML=data.Title;
-        document.getElementById("desc").innerHTML=data.Description;
-        var existingLink=document.getElementById("link");
-        existingLink.removeChild(document.getElementById("child"));
-        var newLink=document.createElement("a");
-        newLink.href=data.Link;
-        newLink.target="_blank";
-        newLink.id="child";
-        newLink.textContent=data.Link;
-        existingLink.appendChild(newLink);
-      })
-      .catch((e)=>{
-        console.log(e);
-      })
-    },1000*60*30);
+        fetch("/todo1").then((response) => {
+            console.log(response);
+            return response.json();
+            countdown();
+        }).then((data) => {
+            document.getElementById("work").innerHTML = data.Title;
+            document.getElementById("desc").innerHTML = data.Description;
+            var existingLink = document.getElementById("link");
+            existingLink.removeChild(document.getElementById("child"));
+            var newLink = document.createElement("a");
+            newLink.href = data.Link;
+            newLink.target = "_blank";
+            newLink.id = "child";
+            newLink.textContent = data.Link;
+            existingLink.appendChild(newLink);
+            countdown();
+        })
+            .catch((e) => {
+                console.log(e);
+            })
+    }, 10000);
+    var mins = 1;
+    var secs = mins * 60;
+    function countdown() {
+        setTimeout('Decrement()', 60);
+    }
+    function Decrement() {
+        minutes = document.getElementById("min");
+        seconds = document.getElementById("sec");
+
+        if (seconds < 59) {
+            seconds.value = secs;
+        }
+        else {
+            minutes.value = getMinutes();
+            seconds.value = getSeconds();
+        }
+        if (secs < 10) {
+            minutes.style.color = "red";
+            seconds.style.color = "red";
+            document.getElementById("msg").innerHTML = "HURRY UP!!";
+        }
+        if (mins < 0) {
+            alert('Timeout');
+            minutes.value = '00';
+            seconds.value = '00';
+            document.getElementById("timeBox").innerHTML = "<b>Time's up.</b>";
+        }
+        else {
+            secs--;
+            setTimeout('Decrement()', 1000);
+        }
+    }
+    function getMinutes() {
+        mins = Math.floor(secs / 60);
+        return mins;
+    }
+    function getSeconds() {
+        return secs - Math.round(mins * 60);
+    }
 </script>
+
 </html>
