@@ -58,6 +58,7 @@ app.get("/todo1",(req,res)=>{
             c++;
             // res.render('todo', { "work": k[b] });
             res.json(k[b]);
+            console.log(k[b]);
             // setInterval(()=>{
             //     res.redirect('/todo');
             // });
@@ -75,6 +76,7 @@ app.get("/todo1",(req,res)=>{
             c = 1;
             // res.render('todo', { "work": k[c] });
             res.json(k[c]);
+            console.log(k[c]);
         }
         dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
     }).catch((err) => {
@@ -92,6 +94,7 @@ app.get('/todo',(req,res)=>{
             b = c;
             c++;
             res.render('todo', { "work": k[b] });
+            console.log(k[b]);
             // setInterval(()=>{
             //     res.redirect('/todo');
             // });
@@ -108,6 +111,7 @@ app.get('/todo',(req,res)=>{
             b = c;
             c = 1;
             res.render('todo', { "work": k[c] });
+            console.log(k[c]);
         }
         dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
     }).catch((err) => {
