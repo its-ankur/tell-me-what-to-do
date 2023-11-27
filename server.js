@@ -1,123 +1,65 @@
 const fs = require('fs');
-const cron=require('node-cron');
 const express = require('express');
-const schedule = require('node-schedule');
-const client = require("mongodb").MongoClient;
+const { MongoClient } = require("mongodb");
 const app = express();
+const port = 3000;
+
+// Use environment variables for sensitive information
+const mongoConnectionString = "mongodb+srv://ankur1037:Ankurqwerty2003@cluster0.apokfz1.mongodb.net/?retryWrites=true&w=majority";
+
+let dbInstance;
+
 app.set("view engine", "ejs");
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-let dbinstance;
-client.connect("mongodb+srv://ankur1037:Ankurqwerty2003@cluster0.apokfz1.mongodb.net/?retryWrites=true&w=majority").then((server) => {
-    dbinstance = server.db("Globe");
-    console.log("connected to db");
-}).catch((err) => {
-    console.log(err);
-});
+
+MongoClient.connect(mongoConnectionString)
+  .then((client) => {
+    dbInstance = client.db("Globe");
+    console.log("Connected to the database");
+  })
+  .catch((err) => {
+    console.error("Error connecting to the database:", err);
+    process.exit(1); // Exit the process on database connection error
+  });
 
 app.get('/', (req, res) => {
-    // let k;
-    // dbinstance.collection("Work").find({}).toArray().then((data) => {
-    //     k = data;
-    //     let b;
-    //     let c = k[0].i;
-    //     if (c <= k.length - 1) {
-    //         b = c;
-    //         c++;
-    //         res.render('index', { "work": k[b] });
-    //         //console.log(k[b]);
-    //         // schedule.scheduleJob('Work-a', '*/2 * * * * *', () => {
-    //         //     b = c;
-    //         //     c++;
-    //         //     res.render('index', { "work": k[b] });
-    //         //     //schedule.cancelJob('Work-a');
-    //         //     dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
-    //         //});
-    //     }
-    //     else if (c > k.length - 1) {
-    //         b = c;
-    //         c = 1;
-    //         res.render('index', { "work": k[c] });
-    //         //console.log(k[c]);
-    //     }
-    //     dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
-    // }).catch((err) => {
-    //     console.log(err);
-    // });
-    res.render('index');
+  res.render('index');
 });
-app.get("/todo1",(req,res)=>{
-    let k;
-    dbinstance.collection("Work").find({}).toArray().then((data) => {
-        k = data;
-        let b;
 
-        let c = k[0].i;
-        if (c <= k.length - 1) {
-            b = c;
-            c++;
-            // res.render('todo', { "work": k[b] });
-            res.json(k[b]);
-            console.log(k[b]);
-            // setInterval(()=>{
-            //     res.redirect('/todo');
-            // });
-            // console.log(k[b]);
-            // cron.schedule('*/15 * * * * *', () => {
-            //     b = c;
-            //     c++;
-            //     res.render('index', { "work": k[b] });
-            //     schedule.cancelJob('Work-a');
-            //     dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
-            // });
-        }
-        else if (c > k.length - 1) {
-            b = c;
-            c = 1;
-            // res.render('todo', { "work": k[c] });
-            res.json(k[c]);
-            console.log(k[c]);
-        }
-        dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
-    }).catch((err) => {
-        console.log(err);
-})
-})
-app.get('/todo',(req,res)=>{
-    let k;
-    dbinstance.collection("Work").find({}).toArray().then((data) => {
-        k = data;
-        let b;
+app.get("/todo1", async (req, res) => {
+  try {
+    const data = await dbInstance.collection("Work").find({}).toArray();
+    let currentIndex = data[0].i;
+    let nextIndex = (currentIndex % data.length) + 1;
 
-        let c = k[0].i;
-        if (c <= k.length - 1) {
-            b = c;
-            c++;
-            res.render('todo', { "work": k[b] });
-            console.log(k[b]);
-            // setInterval(()=>{
-            //     res.redirect('/todo');
-            // });
-            // console.log(k[b]);
-            // cron.schedule('*/15 * * * * *', () => {
-            //     b = c;
-            //     c++;
-            //     res.render('index', { "work": k[b] });
-            //     schedule.cancelJob('Work-a');
-            //     dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
-            // });
-        }
-        else if (c > k.length - 1) {
-            b = c;
-            c = 1;
-            res.render('todo', { "work": k[c] });
-            console.log(k[c]);
-        }
-        dbinstance.collection("Work").updateOne({ "i": b }, { $set: { "i": c } });
-    }).catch((err) => {
-        console.log(err);
-    });
+    await dbInstance.collection("Work").updateOne({ "i": currentIndex }, { $set: { "i": nextIndex } });
+
+    res.json(data[nextIndex - 1]);
+    console.log(data[nextIndex - 1]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
+app.get('/todo', async (req, res) => {
+  try {
+    const data = await dbInstance.collection("Work").find({}).toArray();
+    let currentIndex = data[0].i;
+    let nextIndex = (currentIndex % data.length) + 1;
+
+    await dbInstance.collection("Work").updateOne({ "i": currentIndex }, { $set: { "i": nextIndex } });
+
+    res.render('todo', { "work": data[nextIndex - 1] });
+    console.log(data[nextIndex - 1]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// ... (Other routes remain unchanged)
 app.get('/add', (req, res) => {
     res.render('add');
 });
@@ -184,6 +126,12 @@ app.post('/deleteLink', (req, res) => {
         console.log(err);
     });
 });
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+// Close MongoDB connection on process termination
+process.on('SIGINT', () => {
+  dbInstance.close();
+  process.exit();
 });
