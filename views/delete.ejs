@@ -7,7 +7,17 @@
 </head>
 <body>
     <form action="deleteLink" method="post">
+        <label for="Title">Want to delete this</label>
     <input type="text" name="Title" placeholder="Title" value="<%=work.Title%>">
+    <input type="text" name="Description" placeholder="Description" value="<%=work.Description%>">
+    <input type="text" name="Link" placeholder="Link" value="<%=work.Link%>">
+    <button type="submit">Submit</button>
+    </form>
+    <form action="afterSomeTime" method="post">
+        <label for="Title">Will do it after some time</label>
+        <input type="text" name="Title" placeholder="Title" value="<%=work.Title%>">
+    <input type="text" name="Description" placeholder="Description" value="<%=work.Description%>">
+    <input type="text" name="Link" placeholder="Link" value="<%=work.Link%>">
     <button type="submit">Submit</button>
     </form>
 </body>

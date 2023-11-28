@@ -65,7 +65,7 @@ app.get('/add', (req, res) => {
 });
 app.get('/edit', (req, res) => {
     let k;
-    dbinstance.collection("Work").find({}).toArray().then((data) => {
+    dbInstance.collection("Work").find({}).toArray().then((data) => {
         k = data;
         let c = k[0].i;
         if(c==1){
@@ -83,7 +83,7 @@ app.post('/editLink', (req, res) => {
     let Title = req.body.Title;
     let Link = req.body.Link;
     let data = { "Title": Title, "Link": Link };
-    dbinstance.collection("Work").updateOne({ "Title": Title }, { $set: { "Link": Link } }).then(() => {
+    dbInstance.collection("Work").updateOne({ "Title": Title }, { $set: { "Link": Link } }).then(() => {
         console.log("data edited");
         res.redirect('/');
     }).catch((err) => {
@@ -95,7 +95,7 @@ app.post('/submit', (req, res) => {
     let Description = req.body.Description;
     let Link = req.body.Link;
     let data = { "Title": Title, "Description": Description, "Link": Link };
-    dbinstance.collection("Work").insertOne(data).then(() => {
+    dbInstance.collection("Work").insertOne(data).then(() => {
         console.log("data inserted");
         res.redirect('/');
     }).catch((err) => {
@@ -104,7 +104,7 @@ app.post('/submit', (req, res) => {
 });
 app.get('/delete', (req, res) => {
     let k;
-    dbinstance.collection("Work").find({}).toArray().then((data) => {
+    dbInstance.collection("Work").find({}).toArray().then((data) => {
         k = data;
         let c = k[0].i;
         if(c==1){
@@ -119,13 +119,61 @@ app.get('/delete', (req, res) => {
     });
 });
 app.post('/deleteLink', (req, res) => {
-    dbinstance.collection("Work").deleteOne({'Title':req.body.Title}).then(() => {
+    dbInstance.collection("Work").deleteOne({'Title':req.body.Title}).then(() => {
         console.log("data deleted");
+        dbInstance.collection("WorkDone").insertOne({'Title':req.body.Title,'Description':req.body.Description,'Link':req.body.Link}).then(()=>{
+            console.log("data inserted in WorkDone");
+        }).catch((err)=>{
+            console.log(err);
+        });
         res.redirect('/');
     }).catch((err) => {
         console.log(err);
     });
 });
+
+app.post('/afterSomeTime', (req, res) => {
+  dbInstance.collection("Work").deleteOne({'Title':req.body.Title}).then(() => {
+      console.log("data deleted");
+      dbInstance.collection("AfterSomeTime").insertOne({'Title':req.body.Title,'Description':req.body.Description,'Link':req.body.Link}).then(()=>{
+          console.log("Will do it after some time");
+      }).catch((err)=>{
+          console.log(err);
+      });
+      res.redirect('/');
+  }).catch((err) => {
+      console.log(err);
+  });
+});
+
+app.get('/next',(req,res)=>{
+  res.redirect("/todo");
+});
+
+app.get('/prev',async (req,res)=>{
+  try {
+    const data = await dbInstance.collection("Work").find({}).toArray();
+    let currentIndex = data[0].i;
+    let nextIndex = (currentIndex % data.length) - 1;
+
+    await dbInstance.collection("Work").updateOne({ "i": currentIndex }, { $set: { "i": nextIndex } });
+
+    res.render('todo', { "work": data[currentIndex-1] });
+    console.log(data[currentIndex-1]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get('/all',(req,res)=>{
+  dbInstance.collection("Work").find({}).toArray().then((data)=>{
+    res.render('all',{work:data});
+  }).catch((err)=>{
+    console.log(err);
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
