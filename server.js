@@ -13,9 +13,3 @@ app.listen(port, () => {
 });
 
 // Close MongoDB connection on process termination
-process.on('SIGINT', () => {
-  if (dbInstance) {
-    dbInstance.close();
-  }
-  process.exit();
-});
