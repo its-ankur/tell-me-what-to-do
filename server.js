@@ -11,5 +11,3 @@ app.use('/', routes);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-// Close MongoDB connection on process termination

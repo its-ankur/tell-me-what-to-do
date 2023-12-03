@@ -49,8 +49,16 @@
             <p id="msg"></p>
         </div>
     </div>
+    <h1 id="time">30</h1>
 </body>
 <script>
+    var data=document.getElementById("time");
+    
+    // var i=29;
+    // setInterval(()=>{
+    //     data.innerHTML=i;
+    //     i--;
+    // },1000)
     setInterval(() => {
         console.log("resquest send");
         fetch("/todo1").then((response) => {
