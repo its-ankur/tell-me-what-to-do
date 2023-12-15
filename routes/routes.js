@@ -123,21 +123,26 @@ router.get("/add", (req, res) => {
 router.get("/edit", (req, res) => {
   renderEditOrDelete(req, res, "edit");
 });
-router.post("/editLink", (req, res) => {
-  let Title = req.body.Title;
-  let Link = req.body.Link;
-  let data = { Title: Title, Link: Link };
-  req.db
-    .collection("Work")
-    .updateOne({ Title: Title }, { $set: { Link: Link } })
-    .then(() => {
-      console.log("data edited");
-      res.redirect("/");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+
+router.post("/editLink", async (req, res) => {
+  try {
+    const { Title, Link, Description } = req.body;
+    if (!Title || !Link || !Description) {
+      return res.status(400).send("Missing required fields.");
+    }
+    await req.db.collection("Work").updateOne(
+      { Title: Title },
+      { $set: { Link: Link, Description: Description } }
+    );
+    console.log("Data edited successfully");
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
+
 router.post("/submit", (req, res) => {
   let Title = req.body.Title;
   let Description = req.body.Description;
