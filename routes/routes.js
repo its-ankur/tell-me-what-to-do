@@ -21,12 +21,8 @@ function renderEditOrDelete(req, res, templateName) {
     .then((data) => {
       let k = data;
       let c = k[0].i;
-      if (c === 1) {
-        res.render(templateName, { work: k[c] });
-      }
       if (c <= k.length) {
-        let b = c - 1;
-        res.render(templateName, { work: k[b] });
+        res.render(templateName, { work: k[c] });
       }
     })
     .catch((err) => {
@@ -203,15 +199,16 @@ router.post("/deleteLink", (req, res) => {
           let currentIndex = data[0].i;
           let nextIndex = (currentIndex % data.length) + 1;
           let ndata = {
-            Title: currentIndex.Title,
-            Description: currentIndex.Description,
-            Link: currentIndex.Link,
+            Title: data[currentIndex].Title,
+            Description: data[currentIndex].Description,
+            Link: data[currentIndex].Link,
           };
           req.db
             .collection("CurrentWork")
             .insertOne(ndata)
             .then(() => {
               console.log("data inserted");
+              //console.log(ndata);
             })
             .catch((err) => {
               console.log(err);
