@@ -267,7 +267,9 @@ router.get("/next", async (req, res) => {
 
     let currentIndex = data[0].i;
     let nextIndex = (currentIndex + 1) % data.length;
-
+    if(nextIndex===0){
+      nextIndex=nextIndex+1;
+    }
     await req.db
       .collection("CurrentWork")
       .updateOne({ i: currentIndex }, { $set: { i: nextIndex } });
