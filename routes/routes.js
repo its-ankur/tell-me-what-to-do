@@ -38,29 +38,29 @@ router.get("/", (req, res) => {
 
 // ... (Other routes)
 
-router.get("/todo1", async (req, res) => {
-  try {
-    const data = await req.db.collection("CurrentWork").find({}).toArray();
-    if (data.length === 0) {
-      console.error("No data found");
-      res.status(404).send("Not Found");
-      return;
-    }
+// router.get("/todo1", async (req, res) => {
+//   try {
+//     const data = await req.db.collection("CurrentWork").find({}).toArray();
+//     if (data.length === 0) {
+//       console.error("No data found");
+//       res.status(404).send("Not Found");
+//       return;
+//     }
 
-    let currentIndex = data[0].i;
-    let nextIndex = (currentIndex % data.length) + 1;
+//     let currentIndex = data[0].i;
+//     let nextIndex = (currentIndex % data.length) + 1;
 
-    await req.db
-      .collection("CurrentWork")
-      .updateOne({ i: currentIndex }, { $set: { i: nextIndex } });
+//     await req.db
+//       .collection("CurrentWork")
+//       .updateOne({ i: currentIndex }, { $set: { i: nextIndex } });
 
-    res.json(data[nextIndex - 1]);
-    console.log(data[nextIndex - 1]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
-  }
-});
+//     res.json(data[nextIndex - 1]);
+//     console.log(data[nextIndex - 1]);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
 router.get("/todo", async (req, res) => {
   try {
@@ -70,15 +70,9 @@ router.get("/todo", async (req, res) => {
       res.status(404).send("Not Found");
       return;
     }
-    let currentIndex = data[0].i;
-    let nextIndex = (currentIndex % data.length) + 1;
-
-    await req.db
-      .collection("CurrentWork")
-      .updateOne({ i: currentIndex }, { $set: { i: nextIndex } });
-
-    res.render("todo", { work: data[nextIndex - 1] });
-    console.log(data[nextIndex - 1]);
+    let currentIndex = data[0].i+1;
+    res.render("todo", { work: data[currentIndex] });
+    console.log(data[currentIndex]);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -97,14 +91,17 @@ router.get("/prev", async (req, res) => {
     }
 
     let currentIndex = data[0].i;
-    let prevIndex = (currentIndex - 1 + data.length) % data.length;
-
+    let prevIndex = (currentIndex - 1) % data.length;
+    if(prevIndex===0){
+      prevIndex=data.length-1;
+    }
     await req.db
       .collection("CurrentWork")
-      .updateOne({}, { $set: { i: prevIndex } });
+      .updateOne({i:currentIndex}, { $set: { i: prevIndex } });
 
     res.render("todo", { work: data[prevIndex] });
     console.log(data[prevIndex]);
+    console.log(prevIndex);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -276,6 +273,7 @@ router.get("/next", async (req, res) => {
 
     res.render("todo", { work: data[nextIndex] });
     console.log(data[nextIndex]);
+    console.log(nextIndex);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
