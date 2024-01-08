@@ -70,7 +70,7 @@ router.get("/todo", async (req, res) => {
       res.status(404).send("Not Found");
       return;
     }
-    let currentIndex = data[0].i+1;
+    let currentIndex = data[0].i;
     res.render("todo", { work: data[currentIndex] });
     console.log(data[currentIndex]);
   } catch (err) {
@@ -101,7 +101,7 @@ router.get("/prev", async (req, res) => {
 
     res.render("todo", { work: data[prevIndex] });
     console.log(data[prevIndex]);
-    console.log(prevIndex);
+    //console.log(prevIndex);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -273,7 +273,7 @@ router.get("/next", async (req, res) => {
 
     res.render("todo", { work: data[nextIndex] });
     console.log(data[nextIndex]);
-    console.log(nextIndex);
+    //console.log(nextIndex);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
