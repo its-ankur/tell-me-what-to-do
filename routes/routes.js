@@ -261,7 +261,6 @@ router.get("/next", async (req, res) => {
       res.status(404).send("Not Found");
       return;
     }
-
     let currentIndex = data[0].i;
     let nextIndex = (currentIndex + 1) % data.length;
     if(nextIndex===0){
@@ -270,10 +269,8 @@ router.get("/next", async (req, res) => {
     await req.db
       .collection("CurrentWork")
       .updateOne({ i: currentIndex }, { $set: { i: nextIndex } });
-
     res.render("todo", { work: data[nextIndex] });
     console.log(data[nextIndex]);
-    //console.log(nextIndex);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");

@@ -4,13 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"],
+        input[type="link"],
+        button {
+            margin-top: 10px;
+            padding: 5px;
+            width: 100%;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+            border: 1px solid #555;
+        }
+    </style>
 </head>
 <body>
     <form action="editLink" method="post">
-    <input type="text" name="Title" placeholder="Title" value="<%=work.Title%>">
-    <input type="text" name="Description" placeholder="Description" value="<%=work.Description%>">
-    <input type="link" name="Link" placeholder="Link" value="<%=work.Link %>">
-    <button type="submit">Submit</button>
+        <input type="text" name="Title" placeholder="Title" value="<%=work.Title%>">
+        <input type="text" name="Description" placeholder="Description" value="<%=work.Description%>">
+        <input type="text" name="Link" placeholder="Link" value="<%=work.Link %>">
+        <button type="submit">Submit</button>
     </form>
 </body>
 </html>
