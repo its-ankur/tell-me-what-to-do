@@ -153,19 +153,7 @@
             document.getElementById("msg").innerHTML = "Time's up!";
             document.getElementById("displayMin").value = "";
             document.getElementById("displaySec").value = "";
-
-            // Send fetch request to next endpoint
-            fetch("/next")
-              .then((response) => response.json())
-              .then((data) => {
-                document.getElementById("work").innerText = data.Title;
-                document.getElementById("desc").innerText = data.Description;
-                document
-                  .getElementById("child")
-                  .setAttribute("href", data.Link);
-                document.getElementById("child").innerText = data.Link;
-              })
-              .catch((error) => console.error("Error:", error));
+            window.location.href="/next";
           } else {
             let minutes = Math.floor(remainingSecs / 60);
             let seconds = remainingSecs % 60;
