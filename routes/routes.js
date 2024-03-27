@@ -1,5 +1,3 @@
-// routes.js
-
 const express = require("express");
 const router = express.Router();
 const { connectToDatabase } = require("../database/database");
@@ -7,7 +5,6 @@ const { connectToDatabase } = require("../database/database");
 router.use(express.static("public"));
 router.use(express.urlencoded({ extended: true }));
 
-// Middleware to handle MongoDB connection
 router.use(async (req, res, next) => {
   req.db = req.db || (await connectToDatabase());
   next();
@@ -30,13 +27,10 @@ function renderEditOrDelete(req, res, templateName) {
     });
 }
 
-// Define routes
-
 router.get("/", (req, res) => {
   res.render("index");
 });
 
-// ... (Other routes)
 
 // router.get("/todo1", async (req, res) => {
 //   try {
@@ -79,7 +73,6 @@ router.get("/todo", async (req, res) => {
   }
 });
 
-// ... (Other routes remain unchanged)
 
 router.get("/prev", async (req, res) => {
   try {
