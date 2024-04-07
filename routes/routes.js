@@ -31,7 +31,6 @@ router.get("/", (req, res) => {
   res.render("index");
 });
 
-
 // router.get("/todo1", async (req, res) => {
 //   try {
 //     const data = await req.db.collection("CurrentWork").find({}).toArray();
@@ -73,7 +72,6 @@ router.get("/todo", async (req, res) => {
   }
 });
 
-
 router.get("/prev", async (req, res) => {
   try {
     const data = await req.db.collection("CurrentWork").find({}).toArray();
@@ -85,12 +83,12 @@ router.get("/prev", async (req, res) => {
 
     let currentIndex = data[0].i;
     let prevIndex = (currentIndex - 1) % data.length;
-    if(prevIndex===0){
-      prevIndex=data.length-1;
+    if (prevIndex === 0) {
+      prevIndex = data.length - 1;
     }
     await req.db
       .collection("CurrentWork")
-      .updateOne({i:currentIndex}, { $set: { i: prevIndex } });
+      .updateOne({ i: currentIndex }, { $set: { i: prevIndex } });
 
     res.render("todo", { work: data[prevIndex] });
     console.log(data[prevIndex]);
@@ -101,7 +99,6 @@ router.get("/prev", async (req, res) => {
   }
 });
 
-// ... (Other routes remain unchanged)
 router.get("/add", (req, res) => {
   res.render("add");
 });
@@ -153,7 +150,7 @@ router.post("/deleteLink", (req, res) => {
     .collection("Work")
     .deleteOne({ Title: req.body.Title })
     .then(() => {
-      console.log("data deleted");
+      console.log("data deleted from work");
       req.db
         .collection("WorkDone")
         .insertOne({
@@ -220,15 +217,6 @@ router.post("/afterSomeTime", (req, res) => {
     .deleteOne({ Title: req.body.Title })
     .then(() => {
       console.log("data deleted from Work");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  req.db
-    .collection("CurrentWork")
-    .deleteOne({ Title: req.body.Title })
-    .then(() => {
-      console.log("data deleted from CurrentWork");
       req.db
         .collection("AfterSomeTime")
         .insertOne({
@@ -242,7 +230,51 @@ router.post("/afterSomeTime", (req, res) => {
         .catch((err) => {
           console.log(err);
         });
-      res.redirect("/");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  req.db
+    .collection("CurrentWork")
+    .deleteOne({ Title: req.body.Title })
+    .then(() => {
+      console.log("data deleted from CurrentWork");
+      req.db
+        .collection("Work")
+        .find({})
+        .toArray()
+        .then((data) => {
+          if (data.length === 0) {
+            console.error("No data found");
+            res.status(404).send("Not Found");
+            return;
+          }
+
+          let currentIndex = data[0].i;
+          let nextIndex = (currentIndex % data.length) + 1;
+          let ndata = {
+            Title: data[currentIndex].Title,
+            Description: data[currentIndex].Description,
+            Link: data[currentIndex].Link,
+          };
+          req.db
+            .collection("CurrentWork")
+            .insertOne(ndata)
+            .then(() => {
+              console.log("data inserted");
+              //console.log(ndata);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          req.db
+            .collection("Work")
+            .updateOne({ i: currentIndex }, { $set: { i: nextIndex } });
+          res.redirect("/");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     });
 });
 
@@ -256,8 +288,8 @@ router.get("/next", async (req, res) => {
     }
     let currentIndex = data[0].i;
     let nextIndex = (currentIndex + 1) % data.length;
-    if(nextIndex===0){
-      nextIndex=nextIndex+1;
+    if (nextIndex === 0) {
+      nextIndex = nextIndex + 1;
     }
     await req.db
       .collection("CurrentWork")
